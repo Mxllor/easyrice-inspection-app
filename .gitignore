@@ -1,0 +1,18 @@
+# Ignore frontend dependencies
+/frontend/node_modules/
+/frontend/dist/
+
+# Ignore backend dependencies
+/backend/node_modules/
+/backend/dist/
+/backend/.env
+
+# Prisma
+/backend/prisma/dev.db
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
