@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Standard {
+  id           String        @id @default(uuid())
+  name         String?
+  createDate   DateTime?     @default(now())
+  updateDate   DateTime?     @default(now())
+  inspections  Inspection[]
+  substandards Substandard[]
+}
+
+model Substandard {
+  key          String
+  standardID   String
+  name         String?
+  maxLength    Decimal?       @db.Decimal(10, 2)
+  minLength    Decimal?       @db.Decimal(10, 2)
+  conditionMax Condition?
+  conditionMin Condition?
+  shape        String[]
+  standardData StandardData[]
+  standard     Standard       @relation(fields: [standardID], references: [id])
+
+  @@id([key, standardID])
+  @@unique([key, standardID])
+}
+
+model Inspection {
+  id            String          @id @default(uuid())
+  name          String?
+  standardID    String?
+  note          String?
+  price         Decimal?        @db.Decimal(10, 2)
+  imageLink     String?
+  samplingDate  DateTime?
+  createDate    DateTime?       @default(now())
+  updateDate    DateTime?       @default(now())
+  totalSample   Int?
+  defectRices   DefectRice[]
+  standard      Standard?       @relation(fields: [standardID], references: [id])
+  samplingPoint SamplingPoint[]
+  standardData  StandardData[]
+}
+
+model StandardData {
+  inspectionID String
+  standardKey  String
+  standardID   String
+  value        Decimal?    @db.Decimal(10, 2)
+  inspection   Inspection  @relation(fields: [inspectionID], references: [id], onDelete: Cascade)
+  substandard  Substandard @relation(fields: [standardKey, standardID], references: [key, standardID])
+
+  @@id([inspectionID, standardKey, standardID])
+}
+
+model DefectRice {
+  inspectionID   String
+  defectRiceType DefectRiceType
+  value          Decimal?       @db.Decimal(10, 2)
+  inspection     Inspection     @relation(fields: [inspectionID], references: [id], onDelete: Cascade)
+
+  @@id([inspectionID, defectRiceType])
+}
+
+model SamplingPoint {
+  inspectionID  String
+  samplingPoint SamplingPointType
+  inspection    Inspection        @relation(fields: [inspectionID], references: [id], onDelete: Cascade)
+
+  @@id([inspectionID, samplingPoint])
+}
+
+enum Condition {
+  LT
+  LE
+  GT
+  GE
+}
+
+enum SamplingPointType {
+  Front_End
+  Back_End
+  Other
+}
+
+enum DefectRiceType {
+  yellow
+  paddy
+  damaged
+  glutinous
+  chalky
+  red
+}
