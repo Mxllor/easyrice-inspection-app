@@ -15,12 +15,12 @@ const history: FastifyPluginAsync = async (fastify, opts) => {
                                 properties: {
                                     id: { type: "string" },
                                     name: { type: "string" },
-                                    standardID: { type: "string" },
+                                    // standardID: { type: "string" },
                                     standardName: { type: "string" },
                                     note: { type: "string" },
-                                    price: { type: "number" },
-                                    samplingDate: { type: "string" },
-                                    samplingPoint: { type: "array", items: { type: "string" } },
+                                    // price: { type: "number" },
+                                    // samplingDate: { type: "string" },
+                                    // samplingPoint: { type: "array", items: { type: "string" } },
                                     createDate: { type: "string" },
                                 }
                             }
