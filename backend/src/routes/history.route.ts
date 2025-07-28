@@ -4,6 +4,16 @@ import { getAllHistoryHandler, getHistorybyIdHandler, createHistoryHandler, dele
 const history: FastifyPluginAsync = async (fastify, opts) => {
     fastify.get("/", {
         schema: {
+            querystring: {
+                type: "object",
+                properties: {
+                    id: { type: "string" },
+                    page: { type: "number", default: 1 },
+                    limit: { type: "number", default: 10 },
+                    fromDate: { type: "string" },
+                    toDate: { type: "string" }
+                }
+            },
             response: {
                 200: {
                     type: "object",
@@ -24,7 +34,13 @@ const history: FastifyPluginAsync = async (fastify, opts) => {
                                     createDate: { type: "string" },
                                 }
                             }
-                        }
+                        },
+                        totalItems: { type: "number" },
+                        currentPage: { type: "number" },
+                        totalPages: { type: "number" },
+                        limit: { type: "number" },
+                        firstPage: { type: "boolean" },
+                        lastPage: { type: "boolean" }
                     }
                 }
             }

@@ -1,10 +1,70 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createHistory, getAllHistory, deleteHistory, getHistorybyId } from "../services/history.service";
+import { createHistory, getAllHistory, deleteHistory, getHistorybyId, getCountHistory } from "../services/history.service";
 
 export const getAllHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-        const history = await getAllHistory();
-        return reply.send({data : history});
+        const params: any = request.query;
+        let query: any = {};
+        console.log(params);
+        if (params.id) {
+            query = {
+                where: {
+                    id: {
+                        contains: params.id,
+                        mode: "insensitive"
+                    }
+                },
+                skip: (params.page - 1) * params.limit,
+                take: params.limit
+            }
+        } else if (params.fromDate && params.toDate) {
+            query = {
+                where: {
+                    createDate: {
+                        gte: new Date(params.fromDate) ,
+                        lte: new Date(params.toDate)
+                    }
+                },
+                skip: (params.page - 1) * params.limit,
+                take: params.limit
+            }
+        } else if (params.fromDate) {
+            query = {
+                where: {
+                    createDate: {
+                        gte: new Date(params.fromDate)
+                    }
+                },
+                skip: (params.page - 1) * params.limit,
+                take: params.limit
+            }
+        } else if (params.toDate) {
+            query = {
+                where: {
+                    createDate: {
+                        lte: new Date(params.toDate)
+                    }
+                },
+                skip: (params.page - 1) * params.limit,
+                take: params.limit
+            }
+        } else {
+            query = {
+                skip: (params.page - 1) * params.limit,
+                take: params.limit
+            };
+        }
+        const history = await getAllHistory(query);
+        const historyCount = await getCountHistory();
+        return reply.send({
+            data : history,
+            totalItems: historyCount,
+            currentPage: params.page,
+            totalPages: Math.ceil(historyCount / params.limit),
+            limit: params.limit,
+            firstPage: params.page === 1 ? true : false,
+            lastPage: params.page === Math.ceil(historyCount / params.limit) ? true : false
+        });
     } catch (error) {
         return reply.send(error);
     }

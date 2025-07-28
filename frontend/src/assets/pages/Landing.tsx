@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -18,7 +18,6 @@ import {
   Add as AddIcon,
   Search as SearchIcon,
   Delete as DeleteIcon,
-  CalendarToday as CalendarIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import { dateFormat } from '../utils/dateFormat';
@@ -41,25 +40,31 @@ function Landing() {
     const [toDate, setToDate] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectAll, setSelectAll] = useState(false);
-
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(data.data?.length / itemsPerPage);
+    const itemsPerPage = 3;
+    const [queryString, setQueryString] = useState(`?page=${currentPage}&limit=${itemsPerPage}`);
+    const [refreshKey, setRefreshKey] = useState(0);
+    
     const selectedCount = data.data?.filter((item: any)=> item.selected).length;
 
     useEffect(() => {
-        loadHistory('');
-        
+        loadHistory(`?page=${currentPage}&limit=${itemsPerPage}`);
     },[])
 
-    const loadHistory = async (queryString: string) => {
+    useEffect(() => {
+        console.log(queryString);
+        
+        loadHistory(queryString);
+    },[queryString, currentPage])
+
+    const loadHistory = async (query: string) => {
         try {
-            setCurrentPage(1);
-            const response: any = await axios.get('http://localhost:3000/api/history?' + `page=${currentPage}` + queryString);
+            const response: any = await axios.get('http://localhost:3000/api/history' + query);
             if (response.status !== 200) {
                 alert("Something went wrong");
             }
             setData(response.data);
-            console.log(response.data);
+            setRefreshKey((prevKey) => prevKey + 1);
+            // console.log(response.data);
             
         } catch (error) {
             console.error('Error fetching standard data:', error);
@@ -85,26 +90,51 @@ function Landing() {
         setSearchId('');
         setFromDate('');
         setToDate('');
+        loadHistory(`?page=${currentPage}&limit=${itemsPerPage}`);
     };
 
     const handleSearch = () => {
-        // Search logic would go here
-        // console.log('Searching with:', { searchId, fromDate, toDate });
-        let queryString: string = '';
+        setCurrentPage(1);
+        let query: string = '';
         if (searchId) {
-            queryString = `&id=${searchId}`
+            query = `?page=${1}&limit=${itemsPerPage}&id=${searchId}`
+            setQueryString(query);
         } else if (fromDate && toDate) {
-            queryString = `&fromDate=${fromDate}&toDate=${toDate}`
+            query = `?page=${1}&limit=${itemsPerPage}&fromDate=${fromDate}&toDate=${toDate}`
+            setQueryString(query);
         } else if (fromDate) {
-            queryString = `&fromDate=${fromDate}`
+            query = `?page=${1}&limit=${itemsPerPage}&fromDate=${fromDate}`
+            setQueryString(query);
         } else if (toDate) {
-            queryString = `&toDate=${toDate}`
+            query = `?page=${1}&limit=${itemsPerPage}&toDate=${toDate}`
+            setQueryString(query);
         } else {
-            queryString = '';
+            query = `?page=${1}&limit=${itemsPerPage}`;
+            setQueryString(query);
         }
-        console.log(queryString);
-        
-        loadHistory(queryString);
+        loadHistory(query);
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+        let query: string = '';
+        if (searchId) {
+            query = `?page=${page}&limit=${itemsPerPage}&id=${searchId}`
+            setQueryString(query);
+        } else if (fromDate && toDate) {
+            query = `?page=${page}&limit=${itemsPerPage}&fromDate=${fromDate}&toDate=${toDate}`
+            setQueryString(query);
+        } else if (fromDate) {
+            query = `?page=${page}&limit=${itemsPerPage}&fromDate=${fromDate}`
+            setQueryString(query);
+        } else if (toDate) {
+            query = `?page=${page}&limit=${itemsPerPage}&toDate=${toDate}`
+            setQueryString(query);
+        } else {
+            query = `?page=${page}&limit=${itemsPerPage}`;
+            setQueryString(query);
+        }
+        loadHistory(query);
     };
 
     const handleRowClick = (id: string) => {
@@ -124,6 +154,7 @@ function Landing() {
                     textTransform: 'none',
                     fontWeight: 'bold'
                 }}
+                onClick={() => navigate('/create')}
             >
                 Create Inspection
             </Button>
@@ -217,7 +248,7 @@ function Landing() {
 
         {/* Table */}
         <TableContainer component={Paper} sx={{ mb: 3 }}>
-            <Table>
+            <Table key={refreshKey + 1}>
             <TableHead>
                 <TableRow sx={{ backgroundColor: '#1F7B44' }}>
                 <TableCell padding="checkbox">
@@ -244,7 +275,7 @@ function Landing() {
                 </TableCell>
                 </TableRow>
             </TableHead>
-            <TableBody>
+            <TableBody key={currentPage}>
                 {data.data?.map((row: any, _: any) => (
                 <TableRow
                     key={row.id}
@@ -276,14 +307,14 @@ function Landing() {
         </TableContainer>
 
         {/* Pagination */}
-        <Box sx={{ display: 'flex'}}>
+        <Box sx={{ display: 'flex'}} key={refreshKey}>
             <Typography variant="body2" sx={{ color: '#666' }}>
-                {((itemsPerPage * currentPage) - itemsPerPage) + 1 } - { itemsPerPage * currentPage } of 100
+                {((data.limit * data.currentPage) - data.limit) + 1 } - { data.lastPage ? data.totalItems : data.limit * data.currentPage } of {data.totalItems}
             </Typography>
             <Pagination
-                count={totalPages}
-                page={currentPage}
-                onChange={(_, page) => setCurrentPage(page)}
+                count={data.totalPages === 1 ? 1 : data.totalPages}
+                page={data.totalPages === 1 ? 1 : currentPage}
+                onChange={(_, page) => handlePageChange(page) }
                 color="primary"
                 sx={{
                     '& .MuiPaginationItem-root': {

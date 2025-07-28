@@ -13,7 +13,7 @@ const mapSamplingPoint = (input: string): SamplingPointType => {
   return mapping[input] ?? "Other";
 };
 
-export const getAllHistory = async () => {
+export const getAllHistory = async (query: any) => {
     const history = await prisma.inspection.findMany({
         select: {
             id: true,
@@ -33,7 +33,8 @@ export const getAllHistory = async () => {
                 }
             },
             createDate: true,
-        }
+        },
+        ...query
     });
 
     if (!history) {
@@ -45,6 +46,11 @@ export const getAllHistory = async () => {
         delete item.standard
     })
     return history
+}
+
+export const getCountHistory = async () => {
+    const count = await prisma.inspection.count();
+    return count
 }
 
 export const getHistorybyId = async (id: string) => {
