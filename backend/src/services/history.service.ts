@@ -40,14 +40,86 @@ export const getAllHistory = async () => {
         throw new createError.NotFound("History not found");
     }
     history.forEach((item: any) => {
-        item.samplingPoint = item.samplingPoint.map((point: any) => point.samplingPoint);
+        item.samplingPoint = item.samplingPoint.map((point: any) => point.samplingPoint.replace("_", " "));
         item.standardName = item.standard.name
         delete item.standard
     })
     return history
 }
 
-export const getHistorybyId = async () => {
+export const getHistorybyId = async (id: string) => {
+    const history = await prisma.inspection.findUnique({
+        where: {id: id},
+        select: {
+            id: true,
+            name: true,
+            standardID: true,
+            standard: {
+                select: {
+                    name: true
+                }
+            },
+            note: true,
+            price: true,
+            samplingDate: true,
+            samplingPoint: {
+                select: {
+                    samplingPoint: true
+                }
+            },
+            createDate: true,
+            updateDate: true,
+            totalSample: true,
+            imageLink: true,
+            defectRices: {
+                select: {
+                    defectRiceType: true,
+                    value: true
+                }
+            },
+            standardData: {
+                select: {
+                    substandard: {
+                        select: {
+                            key: true,
+                            name: true,
+                            maxLength: true,
+                            minLength: true,
+                            conditionMax: true,
+                            conditionMin: true,
+                            shape: true
+                        }
+                    },
+                    value: true
+                }
+            }
+        }
+    });
+
+    if (!history) {
+        throw new createError.NotFound("History not found");
+    }
+    history.samplingPoint = history.samplingPoint.map((point: any) => point.samplingPoint);
+
+    const tranformedData  = {
+        id: history.id ?? '',
+        name: history.name ?? '',
+        standardID: history.standardID ?? '',
+        standardName: history.standard?.name ?? '',
+        createDate: history.createDate ?? new Date(),
+        updateDate: history.updateDate ?? new Date(),
+        note: history.note ?? '',
+        samplingDate: history.samplingDate ?? new Date(),
+        samplingPoint: history.samplingPoint.map((point: any) => point.replace("_", " ")) ?? [],
+        totalSample: history.totalSample ?? 0,
+        price: history.price,
+        imageLink: history.imageLink ?? '',
+        standardData: history.standardData ?? [],
+        defectRice: history.defectRices ?? [],
+    };
+    
+    return tranformedData
+            
 }
 
 export const createHistory = async (data : {name: string, standardID: string, note: string, price: number, imageLink: string, samplingDate: Date, totalSample: number, samplingPoint: any, composition: any, defectRice: any}) => {
@@ -67,6 +139,8 @@ export const createHistory = async (data : {name: string, standardID: string, no
                 totalSample: data.totalSample
             }
         })
+        console.log(data.samplingPoint);
+        
         if (data.samplingPoint.length > 0) {
             await prisma.samplingPoint.createMany({
                 data: data.samplingPoint.map((point: string) => ({

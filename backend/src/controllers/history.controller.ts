@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createHistory, getAllHistory, deleteHistory } from "../services/history.service";
+import { createHistory, getAllHistory, deleteHistory, getHistorybyId } from "../services/history.service";
 
 export const getAllHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -10,7 +10,15 @@ export const getAllHistoryHandler = async (request: FastifyRequest, reply: Fasti
     }
 }
 
-export const getHistorybyIdHandler = async (request: FastifyRequest, reply: FastifyReply) => {}
+export const getHistorybyIdHandler = async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const id = (request.params as {id: string}).id;
+        const history = await getHistorybyId(id);
+        return reply.send(history);
+    } catch (error) {
+        return reply.send(error);
+    }
+}
 
 export const createHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {

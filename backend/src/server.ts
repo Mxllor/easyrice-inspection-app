@@ -3,7 +3,7 @@ import standard from "./routes/standard.route";
 import history from "./routes/history.route";
 const server = fastify({ logger: true });
 async function main() {
-
+    server.register(require("@fastify/cors"), { origin: "*" });
     server.register(standard, { prefix: "/api/standard" });
     server.register(history, { prefix: "/api/history" });
 
