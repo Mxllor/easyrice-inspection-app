@@ -66,12 +66,10 @@ function Create() {
     const [standardData, setStandardData] = useState<any>({
         data: []
     });
-    const [selectedStandard, setSelectedStandard] = useState<any>({});
     const [fileError, setFileError] = useState<string>('');
     const [uploadFile, setUploadFile] = useState<File | null>(null);
     const [jsonData, setJsonData] = useState<any>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [computationResults, setComputationResults] = useState<any>(null);
     const samplingPointLabels = {
         frontEnd: "Front End",
         backEnd: "Back End", 

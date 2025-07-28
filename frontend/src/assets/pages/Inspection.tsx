@@ -28,7 +28,7 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   paddingBottom: theme.spacing(3)
 }));
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(() => ({
   fontWeight: 'bold',
   backgroundColor: '#f8f9fa',
   color: '#495057',
@@ -41,7 +41,7 @@ const InfoCard = styled(Paper)(({ theme }) => ({
   boxShadow: 'none'
 }));
 
-const TotalRow = styled(TableRow)(({ theme }) => ({
+const TotalRow = styled(TableRow)(() => ({
   backgroundColor: '#f8f9fa',
   '& td': {
     fontWeight: 'bold'
@@ -49,16 +49,6 @@ const TotalRow = styled(TableRow)(({ theme }) => ({
 }));
 
 // Interfaces
-interface InspectionData {
-    id: string;
-    name: string;
-    standardID: string;
-    imageLink: string;
-    standardData: any;
-    standardName: string;
-    createDate: string;
-    updateDate: string;
-}
 
 interface CompositionItem {
   substandard: {
