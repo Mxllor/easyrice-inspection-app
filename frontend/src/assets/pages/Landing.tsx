@@ -40,7 +40,7 @@ function Landing() {
     const [toDate, setToDate] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectAll, setSelectAll] = useState(false);
-    const itemsPerPage = 3;
+    const itemsPerPage = 10;
     const [queryString, setQueryString] = useState(`?page=${currentPage}&limit=${itemsPerPage}`);
     const [refreshKey, setRefreshKey] = useState(0);
     
