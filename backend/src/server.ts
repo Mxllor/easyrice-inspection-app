@@ -8,7 +8,7 @@ async function main() {
     server.register(history, { prefix: "/api/history" });
 
     try {
-        await server.listen({ port: 3000, host: "0.0.0.0" });
+        await server.listen({ port: Number(process.env.PORT) || 3000, host: "0.0.0.0" });
         console.log("Server listening at http://localhost:3000");
         
     } catch (error) {
