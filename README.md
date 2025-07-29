@@ -1,5 +1,6 @@
 # Rice Inspection App
-Developed By Thanawin Ninkaew
+Developed By Thanawin Ninkaew.
+
 A full-stack Rice Inspection App web application. This project is divided into two main folders:
 
 * `frontend` – built with **Vite**, **React (TypeScript)**, **MUI (Material UI)**, and **Tailwind CSS**.
