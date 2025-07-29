@@ -67,12 +67,15 @@ function Inspection() {
     const { id } = useParams<{id: string}>();
     const [inspectionData, setInspectionData] = useState<any>({});
     const loadInspectionData = async (id: string) => {
-        const response = await axios.get(`http://localhost:3000/api/history/${id}`);
+      try {
+         const response = await axios.get(`http://localhost:3000/api/history/${id}`);
         if (response.status === 200 && response.data) {
             await setInspectionData(response.data);
-        } else {
-            alert("Something went wrong");
-        }
+        } 
+      } catch (error) {
+          console.log("Error", error);
+          navigate('/');
+      }
     };
     useEffect(() => {
         if (!id) return;

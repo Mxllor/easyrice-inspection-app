@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { dateFormFormat, dateInputFormFormat } from '../utils/dateFormat';
+import { dateFormFormat, dateInputFormFormat, getCurrentDate, getFormCurrentDate } from '../utils/dateFormat';
 
 
 
@@ -13,7 +13,6 @@ interface InspectionForm {
   samplingDate: string;
 }
 
-// Custom MUI-styled components using Tailwind
 const TextField = ({ label, value, onChange, placeholder, type = "text", ...props }: any) => (
   <div className="mb-6">
     <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
@@ -97,8 +96,6 @@ const FormGroup = ({ children, sx, ...props }: any) => (
 export default function EditInspectionForm() {
   const navigate = useNavigate();
   const { id } = useParams<{id: string}>();
-  const [inspectionData, setInspectionData] = useState<any>({});
-
   const [formData, setFormData] = useState<InspectionForm>({
     id: '',
     note: '',
@@ -112,8 +109,6 @@ export default function EditInspectionForm() {
     const loadInspectionData = async (id: string) => {
       const response = await axios.get(`http://localhost:3000/api/history/${id}`);
       if (response.status === 200 && response.data) {
-        console.log(response.data);
-        await setInspectionData(response.data);
         const data : any = response.data;
         setFormData({
           id: data.id,
@@ -137,7 +132,6 @@ export default function EditInspectionForm() {
   };
 
   const handleSamplingPointChange = (point: string, checked: boolean) => {
-    console.log(point, checked);
     setFormData(prev => ({
       ...prev,
       samplingPoint: checked ? [...prev.samplingPoint, point] : prev.samplingPoint.filter((p: string) => p !== point)
@@ -145,12 +139,45 @@ export default function EditInspectionForm() {
   };
 
   const handleCancel = () => {
-    console.log('Cancel clicked');
+    setFormData({
+        id: '',
+        note: '',
+        price: 0,
+        samplingPoint: [],
+        samplingDate: new Date().toISOString()
+      })
     navigate(-1);
   };
 
-  const handleSubmit = () => {
-    console.log('Form submitted:', formData);
+  const handleSubmit = async() => {
+    await updateHistory(formData)
+  };
+
+  const updateHistory = async (data: any) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/api/history/${data.id}`, {
+        note: data.note,
+        price: data.price,
+        samplingPoint: data.samplingPoint,
+        samplingDate: data.samplingDate ?dateFormFormat(data.samplingDate) : getFormCurrentDate()
+      });
+      if (response.status === 200) {
+        setFormData({
+          id: '',
+          note: '',
+          price: 0,
+          samplingPoint: [],
+          samplingDate: new Date().toISOString()
+        })
+        navigate(-1);
+      } else {
+        alert("Something went wrong. Can't update history");
+      }
+    } catch (error) {
+      console.error('Could not update history:', error);
+      navigate(-1);
+    }
+    
   };
 
   return (

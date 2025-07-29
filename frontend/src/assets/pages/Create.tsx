@@ -139,7 +139,6 @@ function Create() {
 
       setJsonData(parsedData);
       setUploadFile(file);
-      console.log('JSON data loaded:', parsedData);
       
     } catch (error) {
       setFileError('Invalid JSON file format or unable to read file');
@@ -147,7 +146,6 @@ function Create() {
     } finally {
       setIsProcessing(false);
     }
-    console.log(isProcessing);
     
   };
 
@@ -214,7 +212,6 @@ function Create() {
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    console.log("submit");
     event.preventDefault();
     const samplingPoint = Object.entries(formData.samplingPoint).filter(([_, value]) => value === true).map(([key]) => samplingPointLabels[key as keyof typeof samplingPointLabels]);
     const result = await computingJsonData(jsonData, formData.standard);
@@ -227,8 +224,6 @@ function Create() {
         "samplingDate": dateFormFormat(formData.dateTimeOfSampling),
         ...result
     }
-    console.log(createData);
-    
     await createHistory(createData);
     // handleCancel();
   };
@@ -266,8 +261,6 @@ function Create() {
   };
 
   const computingJsonData = async (data: any, standardID: string) => {
-    console.log("computingJsonData...");
-    
     if (data && standardID) {
         
         const composition: any = [];

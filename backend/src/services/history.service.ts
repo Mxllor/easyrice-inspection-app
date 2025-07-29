@@ -191,6 +191,7 @@ export const updateHistory = async (id: string, data : {note: string, price: num
     existed_history.note = new_data.note;
     existed_history.price = new_data.price;
     existed_history.samplingDate = new_data.samplingDate;
+    existed_history.updateDate = new Date();
 
     await prisma.$transaction(async (prisma) => {
         await prisma.samplingPoint.deleteMany({where: {inspectionID: id}})
