@@ -68,7 +68,7 @@ function Inspection() {
     const [inspectionData, setInspectionData] = useState<any>({});
     const loadInspectionData = async (id: string) => {
       try {
-         const response = await axios.get(`http://localhost:3000/api/history/${id}`);
+         const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/history/${id}`);
         if (response.status === 200 && response.data) {
             await setInspectionData(response.data);
         } 

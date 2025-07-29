@@ -57,7 +57,7 @@ function Landing() {
 
     const loadHistory = async (query: string) => {
         try {
-            const response: any = await axios.get('http://localhost:3000/api/history' + query);
+            const response: any = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/history` + query);
             if (response.status !== 200) {
                 alert("Something went wrong");
             }
@@ -93,7 +93,7 @@ function Landing() {
     const handleDelete = async () => {
         itemSelected.map(async (id: string) => {
             try {
-                const response = await axios.delete(`http://localhost:3000/api/history/${id}`);
+                const response = await axios.delete(`${import.meta.env.VITE_API_BASE_URL}/api/history/${id}`);
                 if (response.status !== 200) {
                     alert("Something went wrong");
                 }
@@ -169,6 +169,8 @@ function Landing() {
                 variant="contained"
                 startIcon={<AddIcon />}
                 sx={{
+                    borderRadius: '6px',
+                    padding: '8px 16px',
                     backgroundColor: '#1F7B44',
                     '&:hover': { backgroundColor: '#45a049' },
                     textTransform: 'none',
@@ -222,7 +224,7 @@ function Landing() {
                 <Button
                     variant="text"
                     onClick={handleClearFilter}
-                    sx={{ color: '#f44336', textTransform: 'none' }}
+                    sx={{ color: '#D91212', textTransform: 'none', textDecoration: 'underline', fontWeight: 'semi-bold' }}
                 >
                     Clear Filter
                 </Button>
@@ -231,6 +233,8 @@ function Landing() {
                     startIcon={<SearchIcon />}
                     onClick={handleSearch}
                     sx={{
+                    borderRadius: '6px',
+                    padding: '8px 16px',
                     backgroundColor: '#1F7B44',
                     '&:hover': { backgroundColor: '#45a049' },
                     textTransform: 'none'

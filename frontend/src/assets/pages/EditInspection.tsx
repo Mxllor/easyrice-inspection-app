@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { dateFormFormat, dateInputFormFormat, getCurrentDate, getFormCurrentDate } from '../utils/dateFormat';
+import { dateFormFormat, dateInputFormFormat, getFormCurrentDate } from '../utils/dateFormat';
 
 
 
@@ -107,7 +107,7 @@ export default function EditInspectionForm() {
   useEffect(() => {
     if (!id) return;
     const loadInspectionData = async (id: string) => {
-      const response = await axios.get(`http://localhost:3000/api/history/${id}`);
+      const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/history/${id}`);
       if (response.status === 200 && response.data) {
         const data : any = response.data;
         setFormData({
@@ -155,7 +155,7 @@ export default function EditInspectionForm() {
 
   const updateHistory = async (data: any) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/history/${data.id}`, {
+      const response = await axios.put(`${import.meta.env.VITE_API_BASE_URL}/api/history/${data.id}`, {
         note: data.note,
         price: data.price,
         samplingPoint: data.samplingPoint,

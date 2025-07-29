@@ -77,7 +77,7 @@ function Create() {
     } as const;
     const loadStandardData = async () => {
         try {
-        const response = await axios.get('http://localhost:3000/api/standard');
+        const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/standard`);
         if (response.status !== 200) {
             alert("Something went wrong");
         }
@@ -230,7 +230,7 @@ function Create() {
 
   const createHistory = async (data: any) => {
     try {
-      const response: any = await axios.post('http://localhost:3000/api/history', data);
+      const response: any = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/history`, data);
       if (response.status !== 200) {
         alert("Something went wrong");
       } else {
