@@ -5,6 +5,7 @@ import Landing from './assets/pages/Landing';
 import Create from './assets/pages/Create';
 import NotFound from './assets/pages/NotFound';
 import Inspection from './assets/pages/Inspection';
+import EditInspectionForm from './assets/pages/EditInspection';
 import './App.css';
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/create" element={<Create />} />
         <Route path="/inspection/:id" element={<Inspection />} />
+        <Route path="/inspection/:id/edit" element={<EditInspectionForm />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </>

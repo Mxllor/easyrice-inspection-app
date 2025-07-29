@@ -1,4 +1,4 @@
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -43,16 +43,15 @@ function Landing() {
     const itemsPerPage = 10;
     const [queryString, setQueryString] = useState(`?page=${currentPage}&limit=${itemsPerPage}`);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [itemSelected, setItemSelected] = useState<string[]>([]);
     
-    const selectedCount = data.data?.filter((item: any)=> item.selected).length;
+    const selectedCount = itemSelected.length;
 
     useEffect(() => {
         loadHistory(`?page=${currentPage}&limit=${itemsPerPage}`);
     },[])
 
     useEffect(() => {
-        console.log(queryString);
-        
         loadHistory(queryString);
     },[queryString, currentPage])
 
@@ -62,9 +61,9 @@ function Landing() {
             if (response.status !== 200) {
                 alert("Something went wrong");
             }
+            response.data.data?.map((item: any) => item.selected = false);
             setData(response.data);
             setRefreshKey((prevKey) => prevKey + 1);
-            // console.log(response.data);
             
         } catch (error) {
             console.error('Error fetching standard data:', error);
@@ -72,18 +71,39 @@ function Landing() {
     }
     const handleSelectAll = (checked: boolean) => {
         setSelectAll(checked);
-        setData(data.data?.map((item: any) => ({ ...item, selected: checked })));
+        setItemSelected(() => {
+            if (checked) {
+                return data.data?.map((item: any) => item.id);
+            } else {
+                return [];
+            }
+        })
     };
 
     const handleSelectItem = (id: string, checked: boolean) => {
-        setData(data.data?.map((item: any) => 
-        item.id === id ? { ...item, selected: checked } : item
-        ));
+        setItemSelected((prevItemSelected: any) => {
+            if (checked) {
+                return [...prevItemSelected, id];
+            } else {
+                return prevItemSelected.filter((item: any) => item !== id);
+            }
+        })
     };
 
-    const handleDelete = () => {
-        setData(data.data?.filter((item: any) => !item.selected));
+    const handleDelete = async () => {
+        itemSelected.map(async (id: string) => {
+            try {
+                const response = await axios.delete(`http://localhost:3000/api/history/${id}`);
+                if (response.status !== 200) {
+                    alert("Something went wrong");
+                }
+            } catch (error) {
+                console.error('Error deleting standard data:', error);
+            }
+        })
         setSelectAll(false);
+        setItemSelected([]);
+        navigate(0)
     };
 
     const handleClearFilter = () => {
@@ -283,23 +303,25 @@ function Landing() {
                     backgroundColor: 'white',
                     '&:hover': { backgroundColor: '#f5f5f5' }
                     }}
-                    onClick={() => handleRowClick(row.id)}
                 >
                     <TableCell padding="checkbox">
-                    <Checkbox
-                        checked={row.selected}
-                        onChange={(e) => handleSelectItem(row.id, e.target.checked)}
-                        sx={{
-                        color: 'default',
-                        '&.Mui-checked': { color: '#4caf50' }
-                        }}
-                    />
+                        <Checkbox
+                            checked={itemSelected?.includes(row.id)}
+                            onChange={(e) => {
+                                handleSelectItem(row.id, e.target.checked);
+                            }}
+                            sx={{
+                            color: 'default',
+                            '&.Mui-checked': { color: '#4caf50' }
+                            }}
+                        />
+                        {row.selected && "true"}
                     </TableCell>
-                    <TableCell>{dateFormat(row.createDate)}</TableCell>
-                    <TableCell>{row.id}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{row.standardName}</TableCell>
-                    <TableCell>{row.note || '-'}</TableCell>
+                    <TableCell onClick={() => handleRowClick(row.id)}>{dateFormat(row.createDate)}</TableCell>
+                    <TableCell onClick={() => handleRowClick(row.id)}>{row.id}</TableCell>
+                    <TableCell onClick={() => handleRowClick(row.id)}>{row.name}</TableCell>
+                    <TableCell onClick={() => handleRowClick(row.id)}>{row.standardName}</TableCell>
+                    <TableCell onClick={() => handleRowClick(row.id)}>{row.note || '-'}</TableCell>
                 </TableRow>
                 ))}
             </TableBody>

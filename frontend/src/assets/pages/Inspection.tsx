@@ -67,10 +67,7 @@ function Inspection() {
     const { id } = useParams<{id: string}>();
     const [inspectionData, setInspectionData] = useState<any>({});
     const loadInspectionData = async (id: string) => {
-        // console.log(id);
         const response = await axios.get(`http://localhost:3000/api/history/${id}`);
-        // console.log(response.data);
-        // console.log(response.status)
         if (response.status === 200 && response.data) {
             await setInspectionData(response.data);
         } else {
@@ -133,7 +130,7 @@ function Inspection() {
             <Button variant="outlined" size="small" onClick={() => {navigate("/")}}>
               Back
             </Button>
-            <Button variant="contained" size="small" color="success">
+            <Button variant="contained" size="small" color="success" onClick={() => {navigate(`/inspection/${inspectionData.id}/edit`)}}>
               Edit
             </Button>
           </Box>
