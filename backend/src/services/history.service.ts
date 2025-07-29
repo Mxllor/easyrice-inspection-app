@@ -145,7 +145,6 @@ export const createHistory = async (data : {name: string, standardID: string, no
                 totalSample: data.totalSample
             }
         })
-        console.log(data.samplingPoint);
         
         if (data.samplingPoint.length > 0) {
             await prisma.samplingPoint.createMany({
@@ -182,7 +181,35 @@ export const createHistory = async (data : {name: string, standardID: string, no
     return inspection
 }
 
-export const updateHistory = async () => {
+export const updateHistory = async (id: string, data : {note: string, price: number, samplingPoint: string[], samplingDate: string}) => {
+    let history: any;
+    const existed_history = await prisma.inspection.findUnique({where: {id: id}});
+    if (!existed_history) {
+        throw new createError.NotFound("History not found");
+    }
+    const new_data: any = data
+    existed_history.note = new_data.note;
+    existed_history.price = new_data.price;
+    existed_history.samplingDate = new_data.samplingDate;
+
+    await prisma.$transaction(async (prisma) => {
+        await prisma.samplingPoint.deleteMany({where: {inspectionID: id}})
+        if (new_data.samplingPoint.length > 0) {
+            await prisma.samplingPoint.createMany({
+                data: new_data.samplingPoint.map((point: string) => ({
+                inspectionID: id,
+                samplingPoint: mapSamplingPoint(point)
+            })),
+                skipDuplicates: true
+            });
+        }
+        history = await prisma.inspection.update({where: {id: id}, data: existed_history});
+    })
+    
+    if (!history) {
+        throw new createError[400]("Could not update history");
+    }
+    return history
 }
 
 export const deleteHistory = async (id: string) => {

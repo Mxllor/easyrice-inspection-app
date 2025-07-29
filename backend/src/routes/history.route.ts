@@ -1,5 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
-import { getAllHistoryHandler, getHistorybyIdHandler, createHistoryHandler, deleteHistoryHandler } from '../controllers/history.controller';
+import { getAllHistoryHandler, getHistorybyIdHandler, createHistoryHandler, deleteHistoryHandler, updateHistoryHandler } from '../controllers/history.controller';
 
 const history: FastifyPluginAsync = async (fastify, opts) => {
     fastify.get("/", {
@@ -141,6 +141,25 @@ const history: FastifyPluginAsync = async (fastify, opts) => {
             }
         }
     }, deleteHistoryHandler);
+    fastify.put("/:id", {
+        schema: {
+            params: {
+                type: "object",
+                properties: {
+                    id: { type: "string" }
+                }
+            },
+            body: {
+                type: "object",
+                properties: {
+                    note: { type: "string" },
+                    price: { type: "number" },
+                    samplingPoint: { type: "array", items: { type: "string" } },
+                    samplingDate: { type: "string" },
+                }
+            }
+        }
+    }, updateHistoryHandler);
 };
 
 export default history;

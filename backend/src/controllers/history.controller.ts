@@ -1,11 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { createHistory, getAllHistory, deleteHistory, getHistorybyId, getCountHistory } from "../services/history.service";
+import { createHistory, getAllHistory, deleteHistory, getHistorybyId, getCountHistory, updateHistory } from "../services/history.service";
 
 export const getAllHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
         const params: any = request.query;
         let query: any = {};
-        console.log(params);
         if (params.id) {
             query = {
                 where: {
@@ -93,7 +92,6 @@ export const createHistoryHandler = async (request: FastifyRequest, reply: Fasti
 export const deleteHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     try {
         const id = (request.params as {id: string}).id;
-        console.log(id);
         const deletedHistory = await deleteHistory(id);
         return reply.send(deletedHistory);
     } catch (error) {
@@ -101,4 +99,13 @@ export const deleteHistoryHandler = async (request: FastifyRequest, reply: Fasti
     }
 }
 
-export const updateHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {}
+export const updateHistoryHandler = async (request: FastifyRequest, reply: FastifyReply) => {
+    try {
+        const id = (request.params as {id: string}).id;
+        const data = request.body;
+        const updatedHistory = await updateHistory(id, data as any);
+        return reply.send(updatedHistory);
+    } catch (error) {
+        return reply.send(error);
+    }
+}
