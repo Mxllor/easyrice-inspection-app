@@ -144,99 +144,98 @@ function Inspection() {
           {/* Information Section */}
           <Box mb={3}>
             <InfoCard>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Create Date - Time
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { dateFormat(inspectionData.createDate) }
-                  </Typography>
+              <Box display="flex">
+                <Box flex="column" width={1/2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Create Date - Time
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { dateFormat(inspectionData.createDate) }
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Standard:
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { inspectionData.standardName }
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Update Date - Time:
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { dateFormat(inspectionData.updateDate) }
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Inspection ID:
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { inspectionData.id }
-                  </Typography>
-                </Box>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Standard:
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { inspectionData.standardName }
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Total Sample:
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { formatNumber(inspectionData.totalSample ?? 0) } Kernal
-                  </Typography>
-                </Box>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Update Date - Time:
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { dateFormat(inspectionData.updateDate) }
-                  </Typography>
-                </Box>
-                <Box>
-                  {/* Empty space to maintain layout */}
+                <Box flex="column" width={1/2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Inspection ID:
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { inspectionData.id }
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Total Sample:
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { formatNumber(inspectionData.totalSample ?? 0) } Kernal
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </InfoCard>
 
             <InfoCard>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Note
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { inspectionData.note }
-                  </Typography>
+              <Box display="flex">
+                <Box flex="column" width={1/2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Note
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { inspectionData.note }
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Date/Time of Sampling
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { dateFormat(inspectionData.samplingDate) }
+                    </Typography>
+                  </Box>
                 </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Price
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { formatNumber(inspectionData.price ?? 0) }
-                  </Typography>
-                </Box>
-              </Box>
-              <Box display="flex" justifyContent="space-between">
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Date/Time of Sampling
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    { dateFormat(inspectionData.samplingDate) }
-                  </Typography>
-                </Box>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    Sampling Point
-                  </Typography>
-                  <Typography variant="body2" fontWeight="500">
-                    {inspectionData.samplingPoint?.length > 0 ? inspectionData.samplingPoint.join(', ') : '-' }
-                  </Typography>
+                <Box flex="column" width={1/2}>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Price
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      { formatNumber(inspectionData.price ?? 0) }
+                    </Typography>
+                  </Box>
+                  <Box>
+                    <Typography variant="caption" color="text.secondary">
+                      Sampling Point
+                    </Typography>
+                    <Typography variant="body2" fontWeight="500">
+                      {inspectionData.samplingPoint?.length > 0 ? inspectionData.samplingPoint.join(', ') : '-' }
+                    </Typography>
+                  </Box>
                 </Box>
               </Box>
             </InfoCard>
           </Box>
 
           {/* Composition Section */}
-          <Paper sx={{ p: 2, mb: 2 }}>
+          <Paper sx={{ p: 2, mb: 2, boxShadow: 'none' }}>
             <Typography variant="h6" fontWeight="bold" mb={1.5}>
               Composition
             </Typography>
@@ -269,7 +268,7 @@ function Inspection() {
           </Paper>
 
           {/* Defect Rice Section */}
-          <Paper sx={{ p: 2 }}>
+          <Paper sx={{ p: 2 , boxShadow: 'none'}}>
             <Typography variant="h6" fontWeight="bold" mb={1.5}>
               Defect Rice
             </Typography>
